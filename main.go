@@ -52,7 +52,19 @@ func main() {
 				fmt.Println(findingMap["version"].(string))
 				fmt.Println("")
 				fmt.Println("\033[4;36mSEVERITY:\033[0m")
-				fmt.Println(findingMap["severity"].(string))
+
+				severity := findingMap["severity"].(string)
+				switch severity {
+				case "high":
+					fmt.Print("\033[31m") // Red
+				case "medium":
+					fmt.Print("\033[33m") // Orange
+				case "low":
+					fmt.Print("\033[32m") // Green
+				}
+				fmt.Println("")
+				fmt.Println(severity)
+				fmt.Print("\033[0m") // Reset color
 				fmt.Println("")
 				fmt.Println("\033[4;36mTITLE:\033[0m")
 				fmt.Println(findingMap["title"].(string))
