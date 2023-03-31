@@ -1,0 +1,63 @@
+name: Build and Release
+# If Action doesn't run, check: https://www.githubstatus.com/
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Set revision environment variable
+        run: |
+          REVISION=$(git rev-parse --short HEAD)
+          echo "REVISION=$REVISION" >> $GITHUB_ENV
+
+      - name: Build for Ubuntu
+        run: GOOS=linux go build -o stgo-linux main.go
+      
+      - name: Build for Mac Darwin
+        run: GOOS=darwin go build -o stgo-darwin main.go
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          tag_name: v${{ env.REVISION }}
+          release_name: Release v${{ env.REVISION }}
+
+          body: |
+            Changes in this release:
+            ${{ join(github.event.commits.*.message, '\n- ') }}
+          draft: false
+          prerelease: false
+      - name: Upload Linux Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./stgo-linux
+          asset_name: stgo-linux
+          asset_content_type: application/octet-stream
+
+      - name: Upload Darwin Binary
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./stgo-darwin
+          asset_name: stgo-darwin
+          asset_content_type: application/octet-stream
