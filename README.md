@@ -38,10 +38,14 @@ Or:
 
 ## Searching for a Specific SRG Version
 
-To search for findings with a specific STIG version, use the -srg flag along with -file or -url:
+To search for findings with a specific STIG version, use the -srg or -vuln flag along with -file or -url:
+
+### Examples
 
 ```bash
 ./stgo -file ./stigs/example_app_stig.json -srg SRG-APP-000074
+
+./stgo -url https://www.example.com/stig.json -vuln V-26680
 ```
 
 Or:
