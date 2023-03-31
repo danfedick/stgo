@@ -47,7 +47,7 @@ To search for findings with a specific STIG version, use the -srg flag along wit
 Or:
 
 ```bash
-./main -url https://www.example.com/stig.json -srg SRG-APP-000074
+./stgo -url https://www.example.com/stig.json -srg SRG-APP-000074
 ```
 
 ### License
