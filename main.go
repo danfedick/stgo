@@ -12,6 +12,8 @@ func main() {
 	fileFlag := flag.String("file", "", "Path to local JSON file")
 	urlFlag := flag.String("url", "", "URL to fetch the JSON data")
 	srgFlag := flag.String("srg", "", "STIG version to search for")
+	vulnFlag := flag.String("vuln", "", "The vulnerability ID to search for")
+
 	flag.Parse()
 
 	if *fileFlag == "" && *urlFlag == "" {
@@ -36,18 +38,14 @@ func main() {
 
 	findings := data["stig"].(map[string]interface{})["findings"].(map[string]interface{})
 
-	if *srgFlag == "" {
-		fmt.Println("List of IDs:")
-		for _, finding := range findings {
-			findingMap := finding.(map[string]interface{})
-			fmt.Println(findingMap["id"].(string))
-		}
-	} else {
+	if *srgFlag != "" || *vulnFlag != "" {
 		matchingFindings := 0
 		for _, finding := range findings {
 			findingMap := finding.(map[string]interface{})
-			if findingMap["version"].(string) == *srgFlag {
+			if (findingMap["version"].(string) == *srgFlag && *srgFlag != "") || (findingMap["id"].(string) == *vulnFlag && *vulnFlag != "") {
 				matchingFindings++
+				fmt.Println("\033[4;36mVULN ID:\033[0m")
+				fmt.Println(findingMap["id"].(string))
 				fmt.Println("\033[4;36mSRG:\033[0m")
 				fmt.Println(findingMap["version"].(string))
 				fmt.Println("\033[4;36mSEVERITY:\033[0m")
@@ -61,7 +59,18 @@ func main() {
 		}
 
 		if matchingFindings == 0 {
-			fmt.Printf("No findings with version '%s' found.\n", *srgFlag)
+			if *srgFlag != "" {
+				fmt.Printf("No findings with version '%s' found.\n", *srgFlag)
+			}
+			if *vulnFlag != "" {
+				fmt.Printf("No findings with vulnerability ID '%s' found.\n", *vulnFlag)
+			}
+		}
+	} else {
+		fmt.Println("List of IDs:")
+		for _, finding := range findings {
+			findingMap := finding.(map[string]interface{})
+			fmt.Println(findingMap["id"].(string))
 		}
 	}
 }
