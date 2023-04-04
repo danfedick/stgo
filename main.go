@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	var data map[string]interface{}
+	var data stigData
 	var err error
 
 	if *fileFlag != "" {
@@ -36,24 +36,23 @@ func main() {
 		return
 	}
 
-	findings := data["stig"].(map[string]interface{})["findings"].(map[string]interface{})
+	findings := data.Stig.Findings
 
 	if *srgFlag != "" || *vulnFlag != "" {
 		matchingFindings := 0
 		for _, finding := range findings {
-			findingMap := finding.(map[string]interface{})
-			if (findingMap["version"].(string) == *srgFlag && *srgFlag != "") || (findingMap["id"].(string) == *vulnFlag && *vulnFlag != "") {
+			if (finding.Version == *srgFlag && *srgFlag != "") || (finding.Id == *vulnFlag && *vulnFlag != "") {
 				matchingFindings++
 				fmt.Println("")
 				fmt.Println("\033[4;36mVULN ID:\033[0m")
-				fmt.Println(findingMap["id"].(string))
+				fmt.Println(finding.Id)
 				fmt.Println("")
 				fmt.Println("\033[4;36mSRG:\033[0m")
-				fmt.Println(findingMap["version"].(string))
+				fmt.Println(finding.Version)
 				fmt.Println("")
 				fmt.Println("\033[4;36mSEVERITY:\033[0m")
 
-				severity := findingMap["severity"].(string)
+				severity := finding.Severity
 				switch severity {
 				case "high":
 					fmt.Print("\033[31m") // Red
@@ -67,10 +66,10 @@ func main() {
 				fmt.Print("\033[0m") // Reset color
 				fmt.Println("")
 				fmt.Println("\033[4;36mTITLE:\033[0m")
-				fmt.Println(findingMap["title"].(string))
+				fmt.Println(finding.Title)
 				fmt.Println("")
 				fmt.Println("\033[4;36mDESCRIPTION:\033[0m")
-				fmt.Println(findingMap["description"].(string))
+				fmt.Println(finding.Description)
 				fmt.Println("")
 			}
 		}
@@ -86,40 +85,40 @@ func main() {
 	} else {
 		fmt.Println("List of IDs:")
 		for _, finding := range findings {
-			findingMap := finding.(map[string]interface{})
-			fmt.Println(findingMap["id"].(string))
+			findingMap := finding
+			fmt.Println(findingMap.Id)
 		}
 	}
 }
 
-func readStigFromFile(file string) (map[string]interface{}, error) {
+func readStigFromFile(file string) (stigData, error) {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
-		return nil, err
+		return stigData{}, err
 	}
-	var result map[string]interface{}
+	var result stigData
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		return nil, err
+		return stigData{}, err
 	}
 	return result, nil
 }
 
-func readStigFromURL(url string) (map[string]interface{}, error) {
+func readStigFromURL(url string) (stigData, error) {
 	resp, err := http.Get(url)
 	if err != nil {
-		return nil, err
+		return stigData{}, err
 	}
 	defer resp.Body.Close()
 
 	data, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return nil, err
+		return stigData{}, err
 	}
-	var result map[string]interface{}
+	var result stigData
 	err = json.Unmarshal(data, &result)
 	if err != nil {
-		return nil, err
+		return stigData{}, err
 	}
 	return result, nil
 }
