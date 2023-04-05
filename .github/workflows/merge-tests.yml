@@ -2,13 +2,13 @@ name: Build and Test
 # If Action doesn't run, check: https://www.githubstatus.com/
 on:
   push:
-    branches: [ "release" ]
-    paths:
-      - '*'
+    branches: 
+      - 'feature/**'
+      - releases
   pull_request:
-    branches: [ "release" ]
-    paths:
-      - '*'
+    branches: 
+      - 'feature/**'
+      - releases
 jobs:
   build:
     runs-on: ubuntu-latest
