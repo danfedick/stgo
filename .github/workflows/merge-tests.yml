@@ -4,11 +4,11 @@ on:
   push:
     branches: [ "release" ]
     paths:
-      - '**.go'
+      - '*'
   pull_request:
     branches: [ "release" ]
     paths:
-      - '**.go'
+      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
