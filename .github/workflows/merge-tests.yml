@@ -1,14 +1,14 @@
-name: Build and Release
+name: Build and Test
 # If Action doesn't run, check: https://www.githubstatus.com/
 on:
   push:
     branches: [ "release" ]
     paths:
-      - '**.go'
+      - '*'
   pull_request:
     branches: [ "release" ]
     paths:
-      - '**.go'
+      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
