@@ -27,7 +27,7 @@ go build -o stgo ./main.go
 To list all Vulnerability IDs within the provided STIG data, use the `-file` flag for a local file or the `-url` flag for a remote URL:
 
 ```bash
-./stgo -file stig.json 
+./stgo -file ./stigs/example_app_stig.json 
 ```
 
 Or:
