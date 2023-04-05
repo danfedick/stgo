@@ -5,14 +5,10 @@ on:
     branches: 
       - 'feature/**'
       - releases
-    paths:
-      - '*'
   pull_request:
     branches: 
       - 'feature/**'
       - releases
-    paths:
-      - '*'
 jobs:
   build:
     runs-on: ubuntu-latest
