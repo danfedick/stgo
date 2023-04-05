@@ -1,0 +1,41 @@
+name: Build and Release
+# If Action doesn't run, check: https://www.githubstatus.com/
+on:
+  push:
+    branches: [ "release" ]
+    paths:
+      - '**.go'
+  pull_request:
+    branches: [ "release" ]
+    paths:
+      - '**.go'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.19
+
+      - name: Set revision environment variable
+        run: |
+          REVISION=$(git rev-parse --short HEAD)
+          echo "REVISION=$REVISION" >> $GITHUB_ENV
+
+      - name: Build for Ubuntu
+        run: GOOS=linux go build -o stgo-linux *.go
+      
+      - name: Test URL viewer
+        run: ./stgo-linux -url https://www.stigviewer.com/stig/application_security_and_development/2022-09-21/MAC-3_Sensitive/json
+
+      - name: Test File viewer
+        run: ./stgo-linux -file ./stigs/example_app_stig.json
+      
+      - name: Test SRG Flag
+        run:  ./stgo-linux -file ./stigs/example_app_stig.json -srg SRG-APP-000001
+
+      - name: Test VULN Flag
+        run:  ./stgo-linux -file ./stigs/example_app_stig.json -vuln  V-26664
