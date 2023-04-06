@@ -17,7 +17,7 @@ You can watch a demo of the program in action here:
 
 ```bash
 cd stig-viewer
-go build -o stgo ./main.go
+go build -o stgo .
 ```
 
 ## Usage

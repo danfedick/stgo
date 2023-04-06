@@ -27,10 +27,10 @@ jobs:
           echo "REVISION=$REVISION" >> $GITHUB_ENV
 
       - name: Build for Ubuntu
-        run: GOOS=linux go build -o stgo-linux *.go
+        run: GOOS=linux go build -o stgo-linux -v ./...
       
       - name: Build for Mac Darwin
-        run: GOOS=darwin go build -o stgo-darwin *.go
+        run: GOOS=darwin go build -o stgo-darwin -v ./...
 
       - name: Create Release
         id: create_release
