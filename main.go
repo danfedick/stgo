@@ -92,6 +92,7 @@ func main() {
 	}
 }
 
+// Trigger actions workflow
 func readStigFromFile(file string) (map[string]interface{}, error) {
 	data, err := ioutil.ReadFile(file)
 	if err != nil {

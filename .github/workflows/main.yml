@@ -21,16 +21,38 @@ jobs:
         with:
           go-version: 1.19
 
-      - name: Set revision environment variable
-        run: |
-          REVISION=$(git rev-parse --short HEAD)
-          echo "REVISION=$REVISION" >> $GITHUB_ENV
-
       - name: Build for Ubuntu
         run: GOOS=linux go build -o stgo-linux *.go
       
       - name: Build for Mac Darwin
         run: GOOS=darwin go build -o stgo-darwin *.go
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: linux-build
+          path: ./stgo-linux
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: darwin-build
+          path: ./stgo-darwin
+          
+  release:
+    needs: [build]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v2
+        with:
+          name: linux-build
+      - uses: actions/download-artifact@v2
+        with:
+          name: darwin-build
+
+      - name: Set revision environment variable
+        run: |
+          REVISION=$(git rev-parse --short HEAD)
+          echo "REVISION=$REVISION" >> $GITHUB_ENV
 
       - name: Create Release
         id: create_release
